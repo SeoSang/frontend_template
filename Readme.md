@@ -1,10 +1,11 @@
 # Frontend Template
 
-frontend template for Next JS + Typescript !
+frontend template for Next JS + Typescript + Recoil !
 
 - Langauge : Typescript
 - FrameWork : React, Next JS
 - Style Guide : Material-UI, styled-components
+- State Management : Recoil
 
 # Example
 
@@ -18,6 +19,8 @@ $ cd frontend_template
 $ npm install
 $ npm run dev
 ```
+
+- It supports theme functions
 
 ## Author
 

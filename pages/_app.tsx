@@ -1,11 +1,11 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Head from "next/head"
 import styled from "styled-components"
 
 import Toolbar from "@material-ui/core/Toolbar"
 import CssBaseline from "@material-ui/core/CssBaseline"
-import { ThemeProvider, StylesProvider } from "@material-ui/core/styles"
-import { ChevronLeft, MenuRounded, ChevronRight } from "@material-ui/icons"
+import { ThemeProvider, StylesProvider, Theme } from "@material-ui/core/styles"
+import { RecoilRoot, useRecoilState } from "recoil"
 import {
   Root,
   getHeader,
@@ -26,10 +26,13 @@ import {
   getMuiTreasuryScheme,
 } from "@mui-treasury/layout/presets"
 
-import theme from "../styles/theme"
+import { getTheme } from "../styles/theme"
 import NavHeader from "../navigation/NavHeader"
 import NavContent from "../navigation/NavContent"
 import MainHeader from "../components/Header"
+import { createStyles, makeStyles } from "@material-ui/styles"
+import { paleteState } from "state/theme"
+import MainLayout from "layout/MainLayout"
 
 const Header = getHeader(styled)
 const DrawerSidebar = getDrawerSidebar(styled)
@@ -39,8 +42,17 @@ const CollapseBtn = getCollapseBtn(styled)
 const Content = getContent(styled)
 const Footer = getFooter(styled)
 
+const useStyles = (custom: Theme) =>
+  makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        backgroundColor: custom.palette.primary.main,
+      },
+    })
+  )
+
 function MyApp({ Component, pageProps }) {
-  React.useEffect(() => {
+  useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side")
     if (jssStyles) {
@@ -57,35 +69,11 @@ function MyApp({ Component, pageProps }) {
           content='minimum-scale=1, initial-scale=1, width=device-width'
         />
       </Head>
-      <StylesProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <Root scheme={getStandardScheme()}>
-            {({ state: { sidebar } }) => (
-              <>
-                <Header>
-                  <Toolbar>
-                    <SidebarTrigger sidebarId='primarySidebar' />
-                    <MainHeader />
-                  </Toolbar>
-                </Header>
-                <DrawerSidebar sidebarId='primarySidebar'>
-                  <SidebarContent>
-                    <NavHeader collapsed={sidebar.primarySidebar.collapsed} />
-                    <NavContent />
-                  </SidebarContent>
-                  <CollapseBtn />
-                </DrawerSidebar>
-                <Content>
-                  <Component {...pageProps} />
-                </Content>
-                <Footer>Footer</Footer>
-              </>
-            )}
-          </Root>
-        </ThemeProvider>
-      </StylesProvider>
+      <RecoilRoot>
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
+      </RecoilRoot>
     </React.Fragment>
   )
 }
